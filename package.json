@@ -7,7 +7,7 @@
     "prestart": "node_modules/.bin/webpack",
     "start": "node_modules/.bin/webpack-dev-server"
   },
-  "author": "Eve Porcello <eve@moonhighway.com>",
+  "author": "Anita Ilieva",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",

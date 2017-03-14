@@ -8,8 +8,19 @@ class MemberList extends Component {
         super(props)
         this.state = {
             members: [],
-            loading: false
+            loading: false,
+            administrators: []
         }
+        this.makeAdmin = this.makeAdmin.bind(this)
+        this.removeAdmin = this.removeAdmin.bind(this)
+    }
+
+        componentWillUpdate(nextProps) {
+        this.style = { backgroundColor: (nextProps.admin) ? 'green' : 'purple' }
+    }
+
+    componentDidUpdate(prevProps) {
+       console.log(`${prevProps.name} updated`, prevProps.admin, this.props.admin)
     }
 
     componentDidMount() {
@@ -23,8 +34,24 @@ class MemberList extends Component {
             }))
     }
 
+    makeAdmin(email) {
+        const administrators = [
+            ...this.state.administrators,
+            email
+        ]
+        this.setState({administrators})
+    }
+
+    removeAdmin(email) {
+        const administrators = this.state.administrators.filter(
+            adminEmail => adminEmail !== email
+        )
+        this.setState({administrators})
+    }
+
+
     render() {
-        const { members, loading } = this.state
+    	const { administrators, members, loading } = this.state
         return (
             <div className="member-list">
                 <h1>Society Members</h1>
@@ -35,15 +62,20 @@ class MemberList extends Component {
                 }
 
                 {(members.length) ?
-                    members.map(
-                        (member, i) =>
-                            <Member key={i}
-                                    name={member.name.first + ' ' + member.name.last}
-                                    email={member.email}
-                                    thumbnail={member.picture.thumbnail}/>
-                    ):
-                    <span>Currently 0 Members </span>
-                }
+                   members.map(
+                	(member, i) => 
+                		<Member key={i} 
+                                admin={administrators.some(
+                                    adminEmail => adminEmail === member.email
+                                    )}
+                                name={member.name.first + ' ' + member.name.last} 
+                                email={member.email}
+                                thumbnail={member.picture.thumbnail}
+                                makeAdmin={this.makeAdmin}
+                                removeAdmin={this.removeAdmin}/>
+                	 ):
+                   <span>Currently 0 Members </span>
+               }
             </div>
         )
     }
