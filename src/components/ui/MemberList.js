@@ -11,21 +11,39 @@ class MemberList extends Component {
             loading: false
         }
     }
+
     componentDidMount() {
         this.setState({loading: true})
-        fetch('https://api.randomuser.med/=nat=US&results=12')
+        fetch('https://api.randomuser.me/?nat=US&results=12')
+            .then(response => response.json())
+            .then(json => json.results)
+            .then(members => this.setState({
+                members,
+                loading: false
+            }))
     }
+
     render() {
-        const { members } = this.state
+        const { members, loading } = this.state
         return (
             <div className="member-list">
                 <h1>Society Members</h1>
-                {members.map(
-                    (data, i) =>
-                        <Member key={i}
-                                onClick={email => console.log(email)}
-                                {...data} />
-                )}
+
+                {(loading) ?
+                    <span>loading...</span> :
+                    <span>{members.length} members</span>
+                }
+
+                {(members.length) ?
+                    members.map(
+                        (member, i) =>
+                            <Member key={i}
+                                    name={member.name.first + ' ' + member.name.last}
+                                    email={member.email}
+                                    thumbnail={member.picture.thumbnail}/>
+                    ):
+                    <span>Currently 0 Members </span>
+                }
             </div>
         )
     }
